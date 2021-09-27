@@ -1,0 +1,23 @@
+python3 -m venv venv
+. venv/bin/activate
+pip install -r requirements.txt
+
+# Quick and easy elasticsearch (run in own terminal):
+docker run -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.15.0
+
+# Autofill setup
+cd Autofill
+
+echo "DJANGO_DEBUG=False" > MPCAutofill/.env
+
+python manage.py collectstatic # required if DJANGO_DEBUG=False
+
+python manage.py migrate
+python manage.py import_sources
+python manage.py update_database
+python manage.py update_dfcs
+
+python manage.py runserver 0.0.0.0:8000
+
+# Optional
+python manage.py createsuperuser
