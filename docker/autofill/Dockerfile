@@ -48,7 +48,7 @@ COPY requirements.txt /MPCAutofill/
 WORKDIR /MPCAutofill
 
 # Install pip requirements
-RUN pip3 install --no-cache-dir wheel
+RUN pip3 install --no-cache-dir gunicorn wheel
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Copy entire repository
@@ -68,7 +68,11 @@ RUN mkdir -p .fluxbox && \
         session.screen0.defaultDeco:      NONE  \n \
     ' >> .fluxbox/init
 
+# Select Xvfb "display" for Google Chrome
+ENV DISPLAY=":1"
+
 # Prepare to start
-USER root
 EXPOSE 5900
+EXPOSE 8000
+USER root
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

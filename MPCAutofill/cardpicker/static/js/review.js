@@ -124,8 +124,41 @@ function generate_xml() {
     let serialiser = new XMLSerializer();
     let xml = serialiser.serializeToString(doc);
 
+    return xml;
+}
+
+function download_xml() {
+    xml = generate_xml();
+
     // download to the user
     download("cards.xml", xml);
+}
+
+function vnc_session() {
+    xml = generate_xml();
+
+    // Forward xml to autofill
+    target_url = "autofill"
+    window_name = "_blank"
+
+    // Put a form together and "post" the xml
+    var form = document.createElement("form");
+    form.setAttribute("method", "post");
+    form.setAttribute("action", target_url);
+    form.setAttribute("target", window_name);
+
+    var input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "xml";
+    input.value = xml;
+
+    form.appendChild(input);
+    document.body.appendChild(form);
+
+    window.open('', window_name);
+    form.target = window_name;
+    form.submit();
+    document.body.removeChild(form);
 }
 
 function switch_faces() {

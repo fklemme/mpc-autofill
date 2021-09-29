@@ -43,14 +43,25 @@ services:
     volumes:
       # Django writes to
       - django_static:/MPCAutofill/static
-    tmpfs:
-      # Orders are stored non-persistently
-      - /mpc_orders
     depends_on:
       - postgres
       - elasticsearch
 
-  # Nginx serving Django's static files
+  # Listener for XML orders and Autofill over VNC
+  autofill:
+    build:
+      context: ..
+      dockerfile: ./docker/autofill/Dockerfile
+    expose:
+      - 8000
+    ports:
+      - ${AUTOFILL_VNC_PORT:-5900}:5900
+    tmpfs:
+      # Orders are stored non-persistently
+      - /mpc_orders
+
+  # Nginx serving Django's static files and
+  # reverse-proxy for all wsgi applications
   nginx:
     image: mpcautofill_nginx
     build:
@@ -63,14 +74,7 @@ services:
       - django_static:/MPCAutofill/static
     depends_on:
       - django
-
-  # Running autofill client interactively over VNC
-  autofill:
-    build:
-      context: ..
-      dockerfile: ./docker/autofill/Dockerfile
-    ports:
-      - ${AUTOFILL_VNC_PORT:-5900}:5900
+      - autofill
 
 # Persistent storage for containers
 volumes:
