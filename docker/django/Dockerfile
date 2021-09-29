@@ -2,6 +2,8 @@
 # cron to regularly update the card database
 FROM ubuntu:20.04
 
+ENV DEBIAN_FRONTEND="noninteractive"
+
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
 # Turns off buffering for easier container logging
@@ -10,8 +12,13 @@ ENV PYTHONUNBUFFERED=1
 # Install tools and additional dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        python3-pip python3-dev \
-        gcc netcat curl cron libpq-dev \
+        cron \
+        curl \
+        gcc \
+        libpq-dev \
+        netcat \
+        python3-dev \
+        python3-pip \
     && rm -rf /var/lib/apt/lists/*
 # Cron: Clean system tasks and allow start as unprivileged user
 # This is a bit hacky but should be fine in Docker environment
@@ -23,8 +30,8 @@ COPY requirements.txt /MPCAutofill/
 WORKDIR /MPCAutofill
 
 # Install pip requirements
-RUN pip3 install gunicorn wheel
-RUN pip3 install -r requirements.txt
+RUN pip3 install --no-cache-dir gunicorn wheel
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Copy entire repository
 COPY . /MPCAutofill

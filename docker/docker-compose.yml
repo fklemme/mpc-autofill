@@ -12,23 +12,23 @@ services:
   # Postgres database for Django
   postgres:
     image: postgres:13.0-alpine
-    expose:
-      - 5432
     environment:
       - POSTGRES_DB=mpcautofill
       - POSTGRES_USER=mpcautofill
       - POSTGRES_PASSWORD=mpcautofill
+    expose:
+      - 5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   # Elasticsearch used by MPCAutofill
   elasticsearch:
     image: elasticsearch:7.14.1
-    expose:
-      - 9200
     environment:
       - discovery.type=single-node
       - logger.level=WARN
+    expose:
+      - 9200
     volumes:
       - elaticsearch_data:/usr/share/elasticsearch/data
 
@@ -38,11 +38,14 @@ services:
     build:
       context: ..
       dockerfile: ./docker/django/Dockerfile
-    volumes:
-      # Writes to
-      - django_static:/MPCAutofill/static
     expose:
       - 8000
+    volumes:
+      # Django writes to
+      - django_static:/MPCAutofill/static
+    tmpfs:
+      # Orders are stored non-persistently
+      - /mpc_orders
     depends_on:
       - postgres
       - elasticsearch
@@ -53,13 +56,24 @@ services:
     build:
       context: ..
       dockerfile: ./docker/nginx/Dockerfile
-    volumes:
-      # Reads from
-      - django_static:/MPCAutofill/static
     ports:
       - ${MPCAUTOFILL_HTTP_PORT:-8000}:80
+    volumes:
+      # Nginx reads from
+      - django_static:/MPCAutofill/static
     depends_on:
       - django
+
+  # Running the autofill client
+  autofill:
+    build:
+      context: ..
+      dockerfile: ./docker/autofill/Dockerfile
+    environment:
+      - DISPLAY
+    # By using the host's network stack, Chrome can talk directly
+    # to the host's X11 server. (Linux only, unfortunately)
+    network_mode: "host"
 
 # Persistent storage for containers
 volumes:
