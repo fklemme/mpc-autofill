@@ -64,16 +64,13 @@ services:
     depends_on:
       - django
 
-  # Running the autofill client
+  # Running autofill client interactively over VNC
   autofill:
     build:
       context: ..
       dockerfile: ./docker/autofill/Dockerfile
-    environment:
-      - DISPLAY
-    # By using the host's network stack, Chrome can talk directly
-    # to the host's X11 server. (Linux only, unfortunately)
-    network_mode: "host"
+    ports:
+      - ${AUTOFILL_VNC_PORT:-5900}:5900
 
 # Persistent storage for containers
 volumes:
