@@ -26,6 +26,7 @@ def application(environ, start_response):
             'USER': 'mpcautofill',
             'HOME': '/home/mpcautofill',
             'DISPLAY': ':1',
+            'PYTHONUNBUFFERED': '1',
         }
 
         # Run autofill
