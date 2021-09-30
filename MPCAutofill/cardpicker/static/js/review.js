@@ -137,26 +137,21 @@ function download_xml() {
 function vnc_session() {
     xml = generate_xml();
 
-    // Forward xml to autofill
-    target_url = "autofill"
-    window_name = "_blank"
+    // Open new window for autofill
+    window.open("", "window_autofill");
 
     // Put a form together and "post" the xml
     var form = document.createElement("form");
     form.setAttribute("method", "post");
-    form.setAttribute("action", target_url);
-    form.setAttribute("target", window_name);
+    form.setAttribute("action", "autofill");
+    form.setAttribute("target", "window_autofill");
 
     var input = document.createElement("input");
     input.type = "hidden";
     input.name = "xml";
     input.value = xml;
-
     form.appendChild(input);
     document.body.appendChild(form);
-
-    window.open('', window_name);
-    form.target = window_name;
     form.submit();
     document.body.removeChild(form);
 }

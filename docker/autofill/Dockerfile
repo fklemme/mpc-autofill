@@ -48,11 +48,12 @@ COPY requirements.txt /MPCAutofill/
 WORKDIR /MPCAutofill
 
 # Install pip requirements
-RUN pip3 install --no-cache-dir gunicorn wheel
+RUN pip3 install --no-cache-dir gunicorn Werkzeug wheel
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Copy entire repository
 COPY . /MPCAutofill
+RUN mkdir -p /mpc_orders
 
 # Create a non-root user and add permission to access the /MPCAutofill folder
 RUN adduser -u 5678 --disabled-password --gecos "" mpcautofill && \
@@ -68,11 +69,16 @@ RUN mkdir -p .fluxbox && \
         session.screen0.defaultDeco:      NONE  \n \
     ' >> .fluxbox/init
 
-# Select Xvfb "display" for Google Chrome
+# Select Xvfb "display" for VNC and Google Chrome
 ENV DISPLAY=":1"
 
 # Prepare to start
 EXPOSE 5900
 EXPOSE 8000
 USER root
+
+# For some reason, /mpc_orders must be re-owned after mounting the volume
+RUN echo 'chown -R mpcautofill /mpc_orders; exec "$@"' > /entrypoint.sh
+ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]
+
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

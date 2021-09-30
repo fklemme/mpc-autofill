@@ -526,14 +526,15 @@ if __name__ == "__main__":
     # Set up chrome driver window here to avoid tqdm issues
     chrome_options = Options()
     chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--user-data-dir")
+    #chrome_options.add_argument("--user-data-dir")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--window-size=1024,768")
+    chrome_options.add_argument("--window-position=0,0")
+    chrome_options.add_argument("--window-size=1280,1024")
     chrome_options.add_argument("--log-level=3")
     chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
     chrome_options.add_experimental_option("detach", True)
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
-    driver.set_window_size(1200, 900)
+    #driver.set_window_size(1200, 900)
     driver.implicitly_wait(5)
     driver.set_network_conditions(offline=False, latency=5, throughput=5 * 125000)
 
@@ -572,11 +573,11 @@ if __name__ == "__main__":
         print("{} hours, ".format(hours), end="")
     print("{} minutes and {} seconds.".format(mins, secs))
 
-    input(
-        "Please review the order and ensure everything is correct before placing \n"
-        "your order. If you need to make any changes to your order, you can do so \n"
-        "by adding it to your Saved Projects.\n"
-        "Continue with saving or purchasing your order in-browser, and press Enter here \n"
-        "to finish up when you're done.\n"
-    )
+    # input(
+    #     "Please review the order and ensure everything is correct before placing \n"
+    #     "your order. If you need to make any changes to your order, you can do so \n"
+    #     "by adding it to your Saved Projects.\n"
+    #     "Continue with saving or purchasing your order in-browser, and press Enter here \n"
+    #     "to finish up when you're done.\n"
+    # )
     sys.exit()
