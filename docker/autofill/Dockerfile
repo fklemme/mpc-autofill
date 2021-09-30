@@ -12,17 +12,20 @@ ENV PYTHONUNBUFFERED=1
 # Install tools and dependencies for Google Chrome setup
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+        ca-certificates \
         fluxbox \
         gnupg2 \
+        net-tools \
+        novnc \
         supervisor \
+        wget \
         x11vnc \
         xvfb \
     && rm -rf /var/lib/apt/lists/*
 
 # Download and install Google Chrome
-ADD https://dl.google.com/linux/linux_signing_key.pub \
-    https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    /tmp/
+RUN wget -q https://dl.google.com/linux/linux_signing_key.pub -O /tmp/linux_signing_key.pub && \
+    wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/google-chrome-stable_current_amd64.deb
 RUN apt-key add /tmp/linux_signing_key.pub && \
     apt-get update && \
     apt-get install -y --no-install-recommends \

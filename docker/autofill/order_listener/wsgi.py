@@ -4,7 +4,7 @@
 from os import mkdir
 from os.path import dirname
 from secrets import token_urlsafe
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen, STDOUT
 from werkzeug.wrappers import Request, Response
 
 def application(environ, start_response):
@@ -25,26 +25,27 @@ def application(environ, start_response):
         autofill_env = {
             'USER': 'mpcautofill',
             'HOME': '/home/mpcautofill',
+            'DISPLAY': ':1',
         }
 
-        # TODO: below not yet working...
         # Run autofill
         autofill_process = Popen(
             ['python3', '/MPCAutofill/autofill.py'],
             env=autofill_env,
             cwd=dirname(xml_path),
-            stdout=PIPE,
             stderr=STDOUT)
         # Do not wait for anything, just continue...
 
         # Redirect to VNC client
         response = Response('Thank you for traveling with MPCAutofill!')
         response.status_code = 302
-        response.location = 'http://localhost:8000/vnc'
+        # TODO: remove hard-coded values in url:
+        #response.location = 'http://localhost:6080/vnc.html?host=localhost&port=6080&autoconnect=1'
+        response.location = 'http://localhost:6080/vnc.html?autoconnect=1'
         return response(environ, start_response)
 
     # Not POSTed!
     response = Response(
-        'Make sure to reach this page from the MPCAutofill web application!')
+        'Make sure to enter this page from the MPCAutofill web application!')
     response.status_code = 400
     return response(environ, start_response)

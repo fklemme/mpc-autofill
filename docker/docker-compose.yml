@@ -56,6 +56,7 @@ services:
       - 8000
     ports:
       - ${AUTOFILL_VNC_PORT:-5900}:5900
+      - ${AUTOFILL_NOVNC_PORT:-6080}:6080
     tmpfs:
       # Orders are stored non-persistently
       - /mpc_orders

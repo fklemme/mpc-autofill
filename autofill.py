@@ -529,7 +529,7 @@ if __name__ == "__main__":
     #chrome_options.add_argument("--user-data-dir")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--window-position=0,0")
-    chrome_options.add_argument("--window-size=1280,1024")
+    chrome_options.add_argument("--window-size=1280,720")
     chrome_options.add_argument("--log-level=3")
     chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
     chrome_options.add_experimental_option("detach", True)
@@ -573,6 +573,7 @@ if __name__ == "__main__":
         print("{} hours, ".format(hours), end="")
     print("{} minutes and {} seconds.".format(mins, secs))
 
+    # Do not wait for user input. Will not work in docker setup.
     # input(
     #     "Please review the order and ensure everything is correct before placing \n"
     #     "your order. If you need to make any changes to your order, you can do so \n"
